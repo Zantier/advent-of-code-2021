@@ -3,14 +3,26 @@ use std::io::{Read,stdin};
 fn main() {
     let mut input = String::new();
     let mut stdin = stdin();
-    stdin.read_to_string(&mut input).expect("oops");
+    stdin.read_to_string(&mut input).unwrap();
 
     let nums = get_nums(&input);
-    let res = solve(nums);
+
+    let res = solve1(&nums);
+    println!("{}", res);
+
+    let res = solve2(&nums);
     println!("{}", res);
 }
 
-fn solve(nums: Vec<i32>) -> i32 {
+fn solve1(nums: &Vec<i32>) -> i32 {
+    let res = nums.iter().zip(nums.iter().skip(1))
+        .filter(|(a,b)| a < b)
+        .count();
+
+    res as i32
+}
+
+fn solve2(nums: &Vec<i32>) -> i32 {
     let sums: Vec<i32> = nums.windows(3)
         .map(|x| x.iter().sum())
         .collect();
