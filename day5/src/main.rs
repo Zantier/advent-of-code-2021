@@ -1,11 +1,30 @@
 use std::collections::*;
 use std::io::stdin;
 
+type Line = ((i32,i32),(i32,i32));
+
 fn main() {
     let input = get_input();
+
+    let res = solve1(&input);
+    println!("{}", res);
+
+    let res = solve2(&input);
+    println!("{}", res);
+}
+
+fn solve1(lines: &[Line]) -> i32 {
+    solve(lines, |(pos0,pos1)| pos0.0 == pos1.0 || pos0.1 == pos1.1)
+}
+
+fn solve2(lines: &[Line]) -> i32 {
+    solve(lines, |_| true)
+}
+
+fn solve(lines: &[Line], filter: fn(&&Line) -> bool) -> i32 {
     let mut map: HashMap<(i32,i32),i32> = HashMap::new();
     let mut res = 0;
-    for (pos0,pos1) in input.iter() {
+    for (pos0,pos1) in lines.iter().filter(filter) {
         let dir = (
             (pos1.0 - pos0.0).signum(),
             (pos1.1 - pos0.1).signum(),
@@ -27,10 +46,10 @@ fn main() {
         }
     }
 
-    println!("{}", res);
+    res
 }
 
-fn get_input() -> Vec<((i32,i32),(i32,i32))> {
+fn get_input() -> Vec<Line> {
     let stdin = stdin();
     let mut input = String::new();
     let mut res = Vec::new();
@@ -47,7 +66,7 @@ fn get_input() -> Vec<((i32,i32),(i32,i32))> {
     res
 }
 
-fn parse_line(line: &str) -> ((i32,i32),(i32,i32)) {
+fn parse_line(line: &str) -> Line {
     let line = line.trim();
     let split: Vec<_> = line.split(" -> ")
         .map(|s| parse_pair(s)).collect();
