@@ -9,6 +9,6 @@ For each day, if I have a solution in rust, it can probably be run with:
 cargo run <input.txt
 ```
 
-For each day, if I have a solution in haskell, it can probably be run with:
+If I have a solution in haskell, it can probably be run with:
 ```
 runghc src/main.hs <input.txt
