@@ -6,26 +6,24 @@ fn main() {
     let mut map: HashMap<(i32,i32),i32> = HashMap::new();
     let mut res = 0;
     for (pos0,pos1) in input.iter() {
-        if pos0.0 == pos1.0 {
-            let lo = pos0.1.min(pos1.1);
-            let hi = pos0.1.max(pos1.1);
-            for i in lo..hi+1 {
-                let entry = map.entry((pos0.0, i)).or_insert(0);
-                *entry += 1;
-                if *entry == 2 {
-                    res += 1;
-                }
+        let dir = (
+            (pos1.0 - pos0.0).signum(),
+            (pos1.1 - pos0.1).signum(),
+        );
+
+        let mut pos = *pos0;
+        loop {
+            let entry = map.entry((pos.0, pos.1)).or_insert(0);
+            *entry += 1;
+            if *entry == 2 {
+                res += 1;
             }
-        } else if pos0.1 == pos1.1 {
-            let lo = pos0.0.min(pos1.0);
-            let hi = pos0.0.max(pos1.0);
-            for i in lo..hi+1 {
-                let entry = map.entry((i, pos0.1)).or_insert(0);
-                *entry += 1;
-                if *entry == 2 {
-                    res += 1;
-                }
+
+            if pos == *pos1 {
+                break;
             }
+            pos.0 += dir.0;
+            pos.1 += dir.1;
         }
     }
 
