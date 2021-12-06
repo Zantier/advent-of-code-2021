@@ -10,6 +10,9 @@ fn main() {
 
     let res = solve1(&values);
     println!("{}", res);
+
+    let res = solve2(&values);
+    println!("{}", res);
 }
 
 fn solve1(values: &[i32]) -> i32 {
@@ -30,4 +33,23 @@ fn solve1(values: &[i32]) -> i32 {
     }
 
     values.len() as i32
+}
+
+fn solve2(values: &[i32]) -> i64 {
+    let days = 256;
+    // After each day, how many new fish spawn
+    let mut fish: Vec<i64> = Vec::new();
+    fish.resize(20,0);
+    for val in values.iter() {
+        fish[(val+1) as usize] += 1;
+    }
+
+    for index in 0..days {
+        if fish.len() < index + 10 {
+            fish.resize(index + 10, 0);
+        }
+        fish[index+7] += fish[index];
+        fish[index+9] += fish[index];
+    }
+    fish.iter().take(days+1).sum::<i64>() + values.len() as i64
 }
