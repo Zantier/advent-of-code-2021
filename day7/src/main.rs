@@ -31,24 +31,53 @@ fn solve1(input: &[i32]) -> i32 {
 }
 
 fn solve2(input: &[i32]) -> i32 {
-    // Binary search on horizontal position
-    let lo = *input.iter().min().unwrap();
-    let hi = *input.iter().max().unwrap();
+    let mut input: Vec<i32> = Vec::from(input);
+    input.sort();
+    let lo = input[0] as usize;
+    let hi = *input.last().unwrap() as usize;
+
+    // First get the fuel required for the crabs to the right
+    // of each position, by iterating backwards
+
+    let mut index = (input.len() - 1) as i32;
+    let mut right = vec![0; hi - lo + 1];
+    // Count crabs
+    let mut count1 = 0;
+    // Fuel per pos
+    let mut count2 = 0;
+    // Total fuel up to the current pos
+    let mut count3 = 0;
+    for (pos, val) in right.iter_mut().enumerate().rev() {
+        let pos = pos + lo;
+        count2 += count1;
+        count3 += count2;
+        while index >= 0 && pos == input[index as usize] as usize {
+            index -= 1;
+            count1 += 1;
+        }
+
+        *val = count3;
+    }
 
     let mut res = 1000000000;
-    for pos in lo..hi+1 {
-        let val = get_fuel(input, pos);
-        res = min(res, val);
-    }
-    res
-}
+    let mut index = 0;
+    // Count crabs
+    let mut count1 = 0;
+    // Fuel per pos
+    let mut count2 = 0;
+    // Total fuel up to the current pos
+    let mut count3 = 0;
+    for (pos, val) in right.iter().enumerate() {
+        let pos = pos + lo;
+        count2 += count1;
+        count3 += count2;
+        while index < input.len() && pos == input[index] as usize {
+            index += 1;
+            count1 += 1;
+        }
 
-/// Get the fuel needed for all crabs to get to pos
-fn get_fuel(input: &[i32], pos: i32) -> i32 {
-    let mut res = 0;
-    for val in input.iter() {
-        let val = (pos - val).abs();
-        res += (val * (val+1)) / 2;
+        res = min(res, count3 + val);
     }
+
     res
 }
