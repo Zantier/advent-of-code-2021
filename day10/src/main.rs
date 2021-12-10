@@ -12,6 +12,9 @@ fn main() {
 
     let res = solve1(&input);
     println!("{}", res);
+
+    let res = solve2(&input);
+    println!("{}", res);
 }
 
 fn solve1(input: &[&[u8]]) -> i32 {
@@ -43,4 +46,44 @@ fn solve1(input: &[&[u8]]) -> i32 {
     }
 
     res
+}
+
+fn solve2(input: &[&[u8]]) -> i64 {
+    let map: HashMap<_, (usize, i32)> = HashMap::from([
+        (b'(', (0,1)),
+        (b')', (0,-1)),
+        (b'[', (1,1)),
+        (b']', (1,-1)),
+        (b'{', (2,1)),
+        (b'}', (2,-1)),
+        (b'<', (3,1)),
+        (b'>', (3,-1)),
+    ]);
+    let mut scores: Vec<i64> = Vec::new();
+    'outer: for line in input {
+        let mut stack: Vec<usize> = Vec::new();
+        for ch in line.iter() {
+            let &(index, val) = map.get(ch).unwrap();
+            if val == 1 {
+                stack.push(index);
+            } else {
+                if stack.pop() != Some(index) {
+                    // Corrupted
+                    continue 'outer;
+                }
+            }
+        }
+
+        // Not a corrupted line
+
+        let mut score = 0;
+        while let Some(top) = stack.pop() {
+            score = 5*score + (top as i64 + 1);
+        }
+        scores.push(score);
+    }
+
+    // Return median score
+    scores.sort();
+    scores[(scores.len()-1)/2]
 }
