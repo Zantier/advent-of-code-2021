@@ -26,9 +26,9 @@ fn solve1(input: &[&[u8]]) -> i32 {
         (b'>', (3,-1)),
     ]);
     let points = [3, 57, 1197, 25137];
-    let mut stack: Vec<usize> = Vec::new();
     let mut res = 0;
     for line in input {
+        let mut stack: Vec<usize> = Vec::new();
         for ch in line.iter() {
             let &(index, val) = map.get(ch).unwrap();
             if val == 1 {
