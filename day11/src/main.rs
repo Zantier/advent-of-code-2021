@@ -13,6 +13,9 @@ fn main() {
 
     let res = solve1(&input);
     println!("{}", res);
+
+    let res = solve2(&input);
+    println!("{}", res);
 }
 
 fn solve1(input: &[Vec<u8>]) -> i32 {
@@ -30,6 +33,30 @@ fn solve1(input: &[Vec<u8>]) -> i32 {
             }
         }
         res += zero(&mut input);
+    }
+
+    res
+}
+
+fn solve2(input: &[Vec<u8>]) -> i32 {
+    let mut input = Vec::from(input);
+
+    if input.len() == 0 {
+        return 0;
+    }
+
+    let mut res = 0;
+    loop {
+        for i in 0..input.len() {
+            for j in 0..input[0].len() {
+                inc(&mut input, i as i32, j as i32);
+            }
+        }
+        res += 1;
+        let count = zero(&mut input) as usize;
+        if count == input.len() * input[0].len() {
+            break;
+        }
     }
 
     res
