@@ -29,37 +29,36 @@ fn main() {
 
 struct Solve1 {
     graph: HashMap<String,HashSet<String>>,
-    visited: HashMap<String,bool>,
 }
 
 impl Solve1 {
     fn solve(nodes: &HashSet<String>,
         graph: &HashMap<String,HashSet<String>>) -> i32 {
-        let mut data = Solve1 {
+        let data = Solve1 {
             graph: graph.clone(),
-            visited: HashMap::from_iter(nodes.iter()
-                .map(|s| (s.to_string(), false))),
         };
+        let mut visited = HashMap::from_iter(nodes.iter()
+            .map(|s| (s.to_string(), false)));
 
-        data.dfs("start")
+        data.dfs("start", &mut visited)
     }
 
-    fn dfs(&mut self, node: &str) -> i32 {
+    fn dfs(&self, node: &str, visited: &mut HashMap<String,bool>) -> i32 {
         if node == "end" {
             return 1;
         }
-        if self.visited[node] {
+        if visited[node] {
             return 0;
         }
 
         if node.chars().next().unwrap().is_ascii_lowercase() {
-            self.visited.insert(node.to_string(), true);
+            visited.insert(node.to_string(), true);
         }
         let mut res = 0;
-        for node2 in self.graph.entry(node.to_string()).or_default().iter() {
-            res += self.dfs(node2);
+        for node2 in self.graph[node].iter() {
+            res += self.dfs(node2, visited);
         }
-        self.visited.insert(node.to_string(), false);
+        visited.insert(node.to_string(), false);
 
         res
     }
