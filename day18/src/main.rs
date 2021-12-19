@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::fmt;
 use std::io::stdin;
 
@@ -35,6 +36,9 @@ fn main() {
 
     let res = solve1(&nums);
     println!("{}", res);
+
+    let res = solve2(&nums);
+    println!("{}", res);
 }
 
 fn solve1(nums: &[Number]) -> i32 {
@@ -45,6 +49,21 @@ fn solve1(nums: &[Number]) -> i32 {
     }
 
     magnitude(&res)
+}
+
+fn solve2(nums: &[Number]) -> i32 {
+    let mut res = 0;
+    for i in 0..nums.len() {
+        for j in i+1..nums.len() {
+            let sum = solve1(&[nums[i].clone(),nums[j].clone()]);
+            res = max(res, sum);
+
+            let sum = solve1(&[nums[j].clone(),nums[i].clone()]);
+            res = max(res, sum);
+        }
+    }
+
+    res
 }
 
 fn parse_number(input: &[u8], index: &mut usize) -> Number {
