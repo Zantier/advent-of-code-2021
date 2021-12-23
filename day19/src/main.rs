@@ -1,16 +1,22 @@
+use std::cmp::max;
 use std::collections::HashSet;
 use std::io::stdin;
 
 fn main() {
     let input = get_input();
 
-    let res = solve1(&input);
+    let (res,scanner_poses) = solve1(&input);
+    println!("{}", res);
+
+    let res = solve2(&scanner_poses);
     println!("{}", res);
 }
 
-fn solve1(scanners: &[Vec<[i32;3]>]) -> i32 {
+fn solve1(scanners: &[Vec<[i32;3]>]) -> (i32,Vec<[i32;3]>) {
     // Assume the first scanner has fixed coordinates and orientation
     let first = &scanners[0];
+    let mut scanner_poses = Vec::new();
+    scanner_poses.push([0,0,0]);
     let mut maps = Vec::new();
     let map: HashSet<[i32;3]> = first.iter().map(|pos| *pos).collect();
     maps.push(map);
@@ -37,6 +43,7 @@ fn solve1(scanners: &[Vec<[i32;3]>]) -> i32 {
                             }
 
                             if matching >= 12 {
+                                scanner_poses.push(offset);
                                 let mut new_map: HashSet<[i32;3]> = HashSet::new();
                                 for i in 0..all_rotations.len() {
                                     let new_pos = add(offset, all_rotations[i][rot_index]);
@@ -65,7 +72,26 @@ fn solve1(scanners: &[Vec<[i32;3]>]) -> i32 {
         full_map.extend(map);
     }
 
-    full_map.len() as i32
+    (full_map.len() as i32, scanner_poses)
+}
+
+fn solve2(scanner_poses: &[[i32;3]]) -> i32 {
+    let mut res = 0;
+    for (i,pos1) in scanner_poses.iter().enumerate() {
+        for pos2 in scanner_poses.iter().skip(i) {
+            res = max(res, manhattan(*pos1, *pos2));
+        }
+    }
+
+    res
+}
+
+fn manhattan(pos1: [i32;3], pos2: [i32;3]) -> i32 {
+    let mut res = 0;
+    for i in 0..3 {
+        res += (pos1[i] - pos2[i]).abs()
+    }
+    res
 }
 
 fn add(pos1: [i32;3], pos2: [i32;3]) -> [i32;3] {
