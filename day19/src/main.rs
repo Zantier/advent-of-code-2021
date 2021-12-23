@@ -16,43 +16,48 @@ fn solve1(scanners: &[Vec<[i32;3]>]) -> i32 {
     maps.push(map);
 
     let rotation_count = 24;
-    for scanner in scanners.iter().skip(1) {
-        let all_rotations: Vec<_> = scanner.iter().map(|pos| get_rotations(pos))
-            .collect();
+    let mut scanners: Vec<_> = scanners.iter().skip(1).collect();
+    while scanners.len() > 0 {
+        let mut remove_i = None;
+        'outer: for (scanner_i,scanner) in scanners.iter().enumerate() {
+            let all_rotations: Vec<_> = scanner.iter().map(|pos| get_rotations(pos))
+                .collect();
 
-        'outer: for pos_index in 0..all_rotations.len() {
-            for rot_index in 0..rotation_count {
-                for (map_i,map) in maps.iter().enumerate() {
-                    for done_pos in map.iter() {
-                        let offset = sub(*done_pos, all_rotations[pos_index][rot_index]);
-                        let mut matching = 0;
-                        for i in 0..all_rotations.len() {
-                            let new_pos = add(offset, all_rotations[i][rot_index]);
-                            if map.contains(&new_pos) {
-                                matching += 1;
-                            }
-                        }
-
-                        if matching >= 12 {
-                            let mut new_map: HashSet<[i32;3]> = HashSet::new();
+            for pos_index in 0..all_rotations.len() {
+                for rot_index in 0..rotation_count {
+                    for (map_i,map) in maps.iter().enumerate() {
+                        for done_pos in map.iter() {
+                            let offset = sub(*done_pos, all_rotations[pos_index][rot_index]);
+                            let mut matching = 0;
                             for i in 0..all_rotations.len() {
                                 let new_pos = add(offset, all_rotations[i][rot_index]);
-                                new_map.insert(new_pos);
+                                if map.contains(&new_pos) {
+                                    matching += 1;
+                                }
                             }
 
-                            println!("");
-                            println!("Matched with map {}", map_i);
-                            println!("old {:?}", map);
-                            println!("new {:?}", new_map);
+                            if matching >= 12 {
+                                let mut new_map: HashSet<[i32;3]> = HashSet::new();
+                                for i in 0..all_rotations.len() {
+                                    let new_pos = add(offset, all_rotations[i][rot_index]);
+                                    new_map.insert(new_pos);
+                                }
 
-                            maps.push(new_map);
+                                println!("{} Matched with map {}", scanner_i, map_i);
 
-                            break 'outer;
+                                maps.push(new_map);
+                                remove_i = Some(scanner_i);
+
+                                break 'outer;
+                            }
                         }
                     }
                 }
             }
         }
+
+        let remove_i = remove_i.unwrap();
+        scanners.remove(remove_i);
     }
 
     let mut full_map: HashSet<[i32;3]> = HashSet::new();
