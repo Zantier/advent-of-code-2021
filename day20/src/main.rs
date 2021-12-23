@@ -24,6 +24,9 @@ fn main() {
 
     let res = solve1(algo.as_bytes(), &image);
     println!("{}", res);
+
+    let res = solve2(algo.as_bytes(), &image);
+    println!("{}", res);
 }
 
 fn solve1(algo: &[u8], image: &[Vec<u8>]) -> i32 {
@@ -48,7 +51,33 @@ fn solve1(algo: &[u8], image: &[Vec<u8>]) -> i32 {
         }
     }
 
-    count_light(&image)
+    count_light(&image, 2)
+}
+
+fn solve2(algo: &[u8], image: &[Vec<u8>]) -> i32 {
+    let iterations = 50;
+    let mut image = extend_image(image, 2*iterations+1);
+    let height = image.len();
+    let width = image[0].len();
+
+    for _ in 0..iterations {
+        let old_image = image.clone();
+        for i in 1..height-1 {
+            for j in 1..width-1 {
+                let mut algo_index = 0;
+                for i2 in i-1..i+2 {
+                    for j2 in j-1..j+2 {
+                        let bit = if old_image[i2][j2] == b'#' { 1 } else { 0 };
+                        algo_index = 2*algo_index + bit;
+                    }
+                }
+
+                image[i][j] = algo[algo_index];
+            }
+        }
+    }
+
+    count_light(&image, iterations)
 }
 
 fn extend_image(input: &[Vec<u8>], pad: usize) -> Vec<Vec<u8>> {
@@ -72,9 +101,8 @@ fn extend_image(input: &[Vec<u8>], pad: usize) -> Vec<Vec<u8>> {
     res
 }
 
-fn count_light(image: &[Vec<u8>]) -> i32 {
+fn count_light(image: &[Vec<u8>], bad: usize) -> i32 {
     let mut res = 0;
-    let bad = 2;
     for row in image.iter().take(image.len()-bad).skip(bad) {
         for ch in row.iter().take(row.len()-bad).skip(bad) {
             if *ch == b'#' {
