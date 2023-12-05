@@ -1,6 +1,6 @@
-# Advent of Code 2021
+# Advent of Code
 
-https://adventofcode.com/2021
+https://adventofcode.com
 
 These are my solutions to programming problems given on the website.
 
