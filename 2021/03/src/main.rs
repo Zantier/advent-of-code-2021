@@ -60,7 +60,7 @@ fn solve2(lines: &[&str]) -> i32 {
     o2 * co2
 }
 
-fn get_rating(lines: &Vec<Vec<u8>>, criteria: fn(i32,i32) -> u8) -> usize {
+fn get_rating(lines: &[Vec<u8>], criteria: fn(i32,i32) -> u8) -> usize {
     let len = lines[0].len();
     let mut done = vec![false; lines.len()];
     let mut values_left = lines.len();

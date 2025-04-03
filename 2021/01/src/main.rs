@@ -14,7 +14,7 @@ fn main() {
     println!("{}", res);
 }
 
-fn solve1(nums: &Vec<i32>) -> i32 {
+fn solve1(nums: &[i32]) -> i32 {
     let res = nums.iter().zip(nums.iter().skip(1))
         .filter(|(a,b)| a < b)
         .count();
@@ -22,7 +22,7 @@ fn solve1(nums: &Vec<i32>) -> i32 {
     res as i32
 }
 
-fn solve2(nums: &Vec<i32>) -> i32 {
+fn solve2(nums: &[i32]) -> i32 {
     let sums: Vec<i32> = nums.windows(3)
         .map(|x| x.iter().sum())
         .collect();
